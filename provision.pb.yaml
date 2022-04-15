@@ -1,0 +1,24 @@
+---
+- hosts: all
+  gather_facts: False
+
+  tasks:
+  - name: "PROVISION FRR.CONF"
+    ansible.builtin.template:
+      src: "frr.conf.j2"
+      dest: "files/{{ inventory_hostname }}/frr.conf"
+    delegate_to: localhost
+
+  - name: "PROVISION FRR DAEMONS"
+    ansible.builtin.template:
+      src: "daemons.j2"
+      dest: "files/{{ inventory_hostname }}/daemons"
+    delegate_to: localhost
+
+- hosts: localhost
+  gather_facts: False
+
+  tasks:
+  - name: "DEPLOY CONTAINERLAB TOPOLOGY"
+    ansible.builtin.command: "containerlab deploy -t lab.yaml --reconfigure"
+    become: yes

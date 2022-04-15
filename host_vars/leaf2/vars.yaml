@@ -1,0 +1,35 @@
+---
+interfaces:
+  lo:
+    description: leaf2 loopback
+    ipv4: 10.0.0.7/32
+  eth1:
+    description: leaf2 x spine1
+    ipv4: 10.25.0.19/31
+  eth2:
+    description: leaf2 x spine2
+    ipv4: 10.25.0.27/31
+  eth3:
+    description: leaf2 x spine3 
+    ipv4: 10.25.0.35/31
+  eth4:
+    description: leaf2 x spine4
+    ipv4: 10.25.0.43/31
+bgp:
+  neighbors:
+  - name: spine1
+    remote:
+      addr: 10.25.0.18
+      asn: 64513
+  - name: spine2
+    remote:
+      addr: 10.25.0.26
+      asn: 64513
+  - name: spine3
+    remote:
+      addr: 10.25.0.34
+      asn: 64513
+  - name: spine4
+    remote:
+      addr: 10.25.0.42
+      asn: 64513

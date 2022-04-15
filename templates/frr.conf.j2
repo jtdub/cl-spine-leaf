@@ -1,0 +1,36 @@
+frr defaults traditional
+hostname {{ inventory_hostname }} 
+no ipv6 forwarding
+!
+ip prefix-list CONNECTED seq 5 permit 10.0.0.0/8 ge 31
+!
+route-map BGP-IPV4-IN permit 5
+!
+route-map BGP-IPV4-OUT permit 5
+!
+route-map BGP-REDISTRIBUTE-CONNECTED permit 5
+ match ip address prefix-list CONNECTED
+ set communit {{ asn }}:1
+!
+{% for ifname in interfaces %}
+interface {{ ifname }}
+ ! description {{ interfaces[ifname]['description'] }}
+ ip address {{ interfaces[ifname]['ipv4'] }}
+!
+{% endfor %}
+router bgp {{ asn }}
+{% for neighbor in bgp['neighbors'] %}
+ neighbor {{ neighbor['remote']['addr'] }} remote-as {{ neighbor['remote']['asn'] }}
+ neighbor {{ neighbor['remote']['addr'] }} description {{ neighbor['name'] }}
+{% endfor %}
+ !
+ address-family ipv4 unicast
+  redistribute connected route-map BGP-REDISTRIBUTE-CONNECTED
+{% for neighbor in bgp['neighbors'] %}
+  neighbor {{ neighbor['remote']['addr'] }} route-map BGP-IPV4-IN in
+  neighbor {{ neighbor['remote']['addr'] }} route-map BGP-IPV4-OUT out
+{% endfor %}
+ exit-address-family
+!
+line vty
+!

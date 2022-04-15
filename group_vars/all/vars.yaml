@@ -1,0 +1,3 @@
+---
+base_dir: "${PWD}"
+name_prefix: "clab-frr-clos-"
